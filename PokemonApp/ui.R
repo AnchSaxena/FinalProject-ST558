@@ -1,5 +1,6 @@
 ## ui.R ##
 library(shiny)
+library(shinyAce)
 library(shinydashboard)
 
 
@@ -30,7 +31,7 @@ shinyUI(
     tabItems(
         tabItem(tabName = "Introduction",
                 h2("Welcome to Data Science with Pokemon!"),
-                tags$img(src="C:\\Users\\dbhat\\Desktop\\ST558\\FinalProject-ST558/image.jpg", width = '100%'),
+                img(src="C:\\Users\\dbhat\\Desktop\\ST558\\FinalProject-ST558/image.jpg", width = '100%'),
                 br(),
                 h3("Introduction"),
                 br(),
@@ -68,6 +69,19 @@ shinyUI(
                     )
                 )
         ),
+        tabItem(tabName = "numSummary",
+                fluidRow(
+                    h3("Basic statistics"),
+                    verbatimTextOutput("basicStat"),
+                    br(),
+                    box(
+                        title = "Scatter Plot", width = 6, solidHeader = TRUE,
+                        collapsible = TRUE, status = "primary",
+                        plotOutput("corPlot", height = 250)
+                    )
+                    
+                )
+        ),
         tabItem(tabName = "unsuper",
                 fluidRow(
                     box(
@@ -83,6 +97,34 @@ shinyUI(
                         plotOutput("distPlot", height = 250)
                     )
                 )
+        ),
+        tabItem(tabName = "super",
+                fluidRow(
+                    box(
+                        title = "Select the PCs to plot", width = 6,
+                        solidHeader = TRUE, collapsible = TRUE, 
+                        status = "warning",
+                        uiOutput("varselect2"),
+                        uiOutput("the_pcs_to_plot_y")
+                    ),
+                    box(
+                        title = "BiPlot", width = 6, solidHeader = TRUE,
+                        collapsible = TRUE, status = "primary",
+                        plotOutput("distPlot", height = 250)
+                    )
+                )
+        ),
+        tabItem(tabName = "dataSet",
+                fluidRow(
+                    box(title = "Dataset used", color = "blue", 
+                        ribbon = FALSE,
+                        title_side = "top left", width = 14,
+                        
+                            tableOutput("table")
+                            
+                        )
+                    )
+                
         )
     )
     )

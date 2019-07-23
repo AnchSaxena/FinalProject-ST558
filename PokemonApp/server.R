@@ -1,35 +1,48 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
+library(shinyAce)
+library(psych)
+library(rpart)
+library(partykit)
+library(randomForest)
+library(dplyr)
+library(corrplot)
+library(readr)
+library(ggplot2)
+library(stringr)
+library(caret)
+library(DT)
+
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
+    #Reading in file
+    getData <- reactive({
+        #read.csv("C:\\Users\\dbhat\\Desktop\\ST558\\FinalProject-ST558\\Pokemon.csv")
+       dt<- mtcars
+    })
 
-    output$the_pcs_to_plot_x <- renderUI({
-        pca_output <- pca_objects()$pca_output$x
-        
-        # drop down selection
-        selectInput(inputId = "the_pcs_to_plot_x", 
-                    label = "X axis:",
-                    choices= colnames(pca_output), 
-                    selected = 'PC1')
+    #######################################################################
+    #Data exploration
+    #######################################################################
+    
+    #Printing basic statistic
+    output$basicStat <- renderPrint({
+        #newData <- pokemon()
+        summary(getData())
     })
     
-    output$the_pcs_to_plot_y <- renderUI({
-        pca_output <- pca_objects()$pca_output$x
-        
-        # drop down selection
-        selectInput(inputId = "the_pcs_to_plot_y", 
-                    label = "Y axis:",
-                    choices= colnames(pca_output), 
-                    selected = 'PC2')
+    #Corr plot
+    output$corPlot <- renderPlot({
+        dat <- data.matrix(getData())
+        corrplot(dat)
     })
+        
 
+    #######################################################################
+    #Data Tab
+    #######################################################################
+    output$table <- renderTable({
+        getData()
+    })
 })
+
