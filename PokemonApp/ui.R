@@ -22,7 +22,11 @@ shinyUI(
         menuItem("Unsupervised Learning", tabName = "unsuper", 
                  icon = icon("buromobelexperte")),
         menuItem("Supervised Learning", tabName = "super", 
-                 icon = icon("buromobelexperte")),
+                 icon = icon("buromobelexperte"),
+            menuSubItem("kNN Model", icon = icon("chart-line"), 
+                             tabName = "kNN"),
+            menuSubItem("Random Forest", icon = icon("chart-line"), 
+                        tabName = "rfModel")),
         menuItem("Data", tabName = "dataSet", 
                  icon = icon("table"))
     )
@@ -42,12 +46,6 @@ shinyUI(
                     solidHeader = TRUE,  width = 12,
                     collapsible = TRUE, status = "primary",
                     verbatimTextOutput("basicStat")
-                    ),
-                    box(
-                        title = "Summary by Generation",
-                        solidHeader = TRUE,  width = 12,
-                        collapsible = TRUE, status = "primary",
-                        verbatimTextOutput("genSummary")
                     )
                 )
         ),
@@ -71,5 +69,72 @@ shinyUI(
                         collapsible = TRUE, status = "primary",
                         plotOutput("pairs", height = 250)
                     )
-                ))
+                )),
+        tabItem(tabName = "kNN",
+                fluidRow(
+                    box(
+                        title = "Model Inputs",
+                        solidHeader = TRUE,  width = 4,
+                        collapsible = TRUE, status = "primary",
+                        sliderInput("k", "number of neighbors",
+                                    min = 1, max = 20, value = 5),
+                        checkboxGroupInput("checkGroup", 
+                                           label = h3("Dataset Features"), 
+                                           choices = c("HitPoints",
+                                                       "Attack","Defense",
+                                                       "SpecialAttack",
+                                                       "SpecialDefense",
+                                                       "Speed","Type1",
+                                                       "Type2","Legendary",
+                                                       "Generation"), 
+                                           inline = F,
+                                           selected = "Attack")
+                    ),
+                    box(
+                        title = "Model Summary",
+                        solidHeader = TRUE,  width = 8,
+                        collapsible = TRUE, status = "primary",
+                        div(style = 'overflow-y: scroll',verbatimTextOutput("knnSumm"))
+                    ),
+                    box(
+                        title = "RMSE",
+                        solidHeader = TRUE,  width = 8,
+                        collapsible = TRUE, status = "primary",
+                        verbatimTextOutput("value")
+                    )
+                )
+        ),
+        tabItem(tabName = "rfModel",
+                fluidRow(
+                    box(
+                        title = "Model Inputs",
+                        solidHeader = TRUE,  width = 4,
+                        collapsible = TRUE, status = "primary",
+                        checkboxGroupInput("rfcheckGroup", 
+                                           label = h3("Dataset Features"), 
+                                           choices = c("HitPoints",
+                                                       "Attack","Defense",
+                                                       "SpecialAttack",
+                                                       "SpecialDefense",
+                                                       "Speed","Type1",
+                                                       "Type2","Legendary",
+                                                       "Generation"), 
+                                           inline = F,
+                                           selected = "Attack")
+                    ),
+                    box(
+                        title = "Training Model Summary",
+                        solidHeader = TRUE,  width = 8,
+                        collapsible = TRUE, status = "primary",
+                        div(style = 'overflow-y: scroll',
+                            verbatimTextOutput("rfSumm"))
+                    ),
+                    box(
+                        title = "RMSE for Predicted Model",
+                        solidHeader = TRUE,  width = 8,
+                        collapsible = TRUE, status = "primary",
+                        verbatimTextOutput("rfvalue")
+                    )
+                )
+        )
 ))))
