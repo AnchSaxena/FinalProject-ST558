@@ -2,7 +2,7 @@ library(shiny)
 library(shinyAce)
 library(psych)
 library(rpart)
-library(partykit)
+#library(partykit)
 library(randomForest)
 library(dplyr)
 library(corrplot)
@@ -11,12 +11,10 @@ library(ggplot2)
 library(stringr)
 library(tidyverse)
 library(knitr)
-library(kableExtra)
 library(readr)
 library(DT)
 library(caret)
-library(RCurl)
-library(excelR)
+library(plotly)
 
 #read data/clean it
 pokemonData <- read.csv("C:\\Users\\dbhat\\Desktop\\ST558\\FinalProject-ST558\\Pokemon.csv")
@@ -38,56 +36,26 @@ shinyServer(function(input, output, session) {
     getData <- reactive({
         read.csv("C:\\Users\\dbhat\\Desktop\\ST558\\FinalProject-ST558\\Pokemon.csv")
     })
-
+    
     #######################################################################
-    #Data exploration
-    #######################################################################
-    
-    #Printing basic statistic
-    output$basicStat <- renderPrint({
-        #newData <- pokemon()
-        summary(getData())
-    })
-
-    #Plotting Attack v/s Defense
-    output$pairs <- renderPlot({
-        df <- getData()
-        ggplot(df, aes(df$Attack, df$Defense)) + 
-            geom_point(aes(color = df$Generation)) +
-            theme_bw() + labs(title="Scatterplot") + 
-            facet_wrap( ~ df$Generation)
-    })
-    
-    
-    #Corr plot1
-    output$corPlot1 <- renderPlot({
-        df <- getData()
-        Correlation <- cor(df[,5:12], method = "spearman")
-        #plotting correlation
-        corrplot(Correlation,type="lower")
-    })
-    
-    #Corr plot2
-    output$corPlot2 <- renderPlot({
-        df <- getData()
-        g <- ggplot(df, aes(df$Attack, df$Defense)) 
-        g + geom_point(aes(df$Attack, df$Defense, color = df$Legendary)) +
-            theme_bw() + labs(title="Scatterplot")
-    })
-        
-
-    #######################################################################
-    #Data Tab
+    # #Data Tab
     #######################################################################
     output$table1 <- renderDataTable({
-        datatable(getData()[,2:13])
+         datatable(getData()[,2:13])
     })
+    #Download data to csv
+    output$downloadData <- downloadHandler(
+        filename = function(){paste("pokemonData", "csv", sep = ".")}, 
+        content = function(file){
+            write.csv(pokemonData, file)}
+    )
+    
     #######################################################################
-    #kNN Model
+    # #kNN Model
     #######################################################################
     observe({
         set.seed(1)
-        ctrl <- trainControl(method = "repeatedcv", number = 10, 
+        ctrl <- trainControl(method = "repeatedcv", number = 10,
                              repeats = 3)
         knnFit <- train(as.formula(paste("Total ~ ",paste(input$checkGroup,collapse="+"))), data = pokemonDataTrain,
                         method = "knn", trControl = ctrl,
@@ -95,9 +63,9 @@ shinyServer(function(input, output, session) {
                         tuneGrid = expand.grid(k = input$k))
         #Predict
         knnPredict <- predict(knnFit,newdata = pokemonDataTest)
-        
+
         #Print RMSE of predicted Model
-        output$value <- renderPrint({ 
+        output$value <- renderPrint({
             r <- RMSE(knnPredict, pokemonDataTest$Total)
             paste("RMSE of predicted model is", r)
             })
@@ -107,12 +75,13 @@ shinyServer(function(input, output, session) {
             })
 
     })
+    
     #######################################################################
-    # Random Forest
+    # # Random Forest
     #######################################################################
     observe({
         set.seed(1)
-        ctrl <- trainControl(method = "repeatedcv", number = 10, 
+        ctrl <- trainControl(method = "repeatedcv", number = 10,
                              repeats = 3)
         rfFit <- train(as.formula(paste("Total ~ ",paste(input$rfcheckGroup,collapse="+"))), data = pokemonDataTrain,
                         method = "rf", trControl = ctrl,
@@ -120,9 +89,9 @@ shinyServer(function(input, output, session) {
                         )
         #Predict
         rfPredict <- predict(rfFit,newdata = pokemonDataTest)
-        
+
         #Print RMSE of predicted Model
-        output$rfvalue <- renderPrint({ 
+        output$rfvalue <- renderPrint({
             r2 <- summary(rfPredict)
             rfR <- RMSE(rfPredict, pokemonDataTest$Total)
             paste("RMSE of predicted model is", rfR)
@@ -131,15 +100,113 @@ shinyServer(function(input, output, session) {
         output$rfSumm <- renderPrint({
             rfFit
         })
-        
+
     })
     
     #######################################################################
-    # PCA
+    #PCA
+    #######################################################################
+    observe({
+        dataPCA <- pokemonData %>% select(5:11)
+        pca<-prcomp(dataPCA, center=TRUE, scale=TRUE)
+
+        #Store PCs into dataframe
+        PC <- as.data.frame(pca$rotation)
+        output$PCTable <- renderDataTable({
+            datatable(round(PC,3))
+        })
+
+        # Variability of each principal component: pr.var
+        pr.var <- pca$sdev^2
+        # Variance explained by each principal component: pve
+        pve <- pr.var / sum(pr.var)
+
+        #ScreePlot
+        output$screePlot <- renderPlot({
+            # Plot variance explained for each principal component
+            screeplot(pca, type = "lines")
+        })
+
+        output$cummVarPlot <- renderPlot({
+            #Plot cumulative proportion of variance explained
+            plot(cumsum(pve), xlab = "Principal Component",
+                 ylab = "Cumulative Proportion of Variance Explained",
+                 ylim = c(0, 1), type = "b")
+        })
+
+        #BiPlot
+        output$biPlot <- renderPlot({
+            if(input$var1 == input$var2){
+                return(null())
+            }
+            biplot(pca, choices = c(as.numeric(input$var1),
+                                    as.numeric(input$var2)), cex = 0.8,
+                   xlim = c(-0.08, 0.1), ylim = c(-0.07, 0.1))
+        })
+
+        #Print PCA Summary
+        output$pcSumm <- renderPrint({
+            summary(pca)
+        })
+
+    })
+    #######################################################################
+    #Data exploration
     #######################################################################
     
+    #Printing basic statistic
+    output$basicStat <- renderPrint({
+        #newData <- pokemon()
+        summary(getData())
+    })
     
+    #Corr plot1
+    output$corPlot1 <- renderPlot({
+        df <- getData()
+        Correlation <- cor(df[,5:12], method = "spearman")
+        #plotting correlation
+        corrplot(Correlation,type="lower")
+    })
     
+    #Histogram
+    output$hist <- renderPlotly({
+        qplot(pokemonData$Total,geom="histogram", 
+          binwidth = 2, xlab = "Total", fill=I("blue"), 
+          col=I("red"))
+    })
+    
+    #Box Plot
+    output$boxPlot <- renderPlotly({
+        ggplot(pokemonData, aes(Generation, color = Legendary)) + 
+            geom_bar()+
+            labs(title = "Stacked Bar Chart", x = "generation", 
+                 y = "count of generation") 
+    })
+    
+    #Download data to csv
+    output$downloadPlot <- downloadHandler(
+        filename = function(){paste(input$savePlot, "png", sep = ".")}, 
+        content = function(file){
+            png(file)
+            if(input$savePlot == "Histogram"){
+                qplot(pokemonData$Total,geom="histogram", 
+                      binwidth = 2, xlab = "Total", ylab = "Frequency",
+                      fill=I("blue"), 
+                      col=I("red"))
+            }
+            else if(input$savePlot == "Correlation Plot"){
+                df <- getData()
+                Correlation <- cor(df[,5:12], method = "spearman")
+                #plotting correlation
+                corrplot(Correlation,type="lower")
+            }
+            else{
+                ggplot(pokemonData, aes(Generation, color = Legendary)) + 
+                    geom_bar()+
+                    labs(title = "Stacked Bar Chart", x = "generation", 
+                         y = "count of generation")
+            }
+            dev.off()}
+    )
+
 })
-
-
