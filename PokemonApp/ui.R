@@ -46,7 +46,25 @@ shinyUI(
                             div(style = 'overflow-x: scroll', 
                                 dataTableOutput("table1")),
                             br(),
-                            a("Data Source" ,href="https://www.kaggle.com/alopez247/pokemon", target="_blank")
+                            box(
+                                title = "Description of DataSet",
+                                solidHeader = TRUE, width = 12,
+                                collapsible = TRUE, status = "danger",
+                                a("Data Source" ,href="https://www.kaggle.com/alopez247/pokemon", target="_blank"),
+                                br(),
+                                h4("Name: Name of each pokemon"),
+                                h4("Type1: Each pokemon has a type, this determines weakness/resistance to attacks"),
+                                h4("Type2: Some pokemon are dual type and have 2"),
+                                h4("Total: Sum of all stats that come after this, a general guide to how strong a pokemon is"),
+                                h4("HitPoints: This defines how much damage a pokemon can withstand before fainting"),
+                                h4("Attack: The base modifier for normal attacks (eg. Scratch, Punch)"),
+                                h4("Defense: The base damage resistance against normal attacks"),
+                                h4("SpecialAttack: The base modifier for special attacks (e.g. fire blast, bubble beam)"),
+                                h4("SpecialDefense: The base damage resistance against special attacks"),
+                                h4("Speed: Determines which pokemon attacks first each round"),
+                                h4("Generation: Number of the generation when the Pokémon was introduced"),
+                                h4("Legendary: Boolean that indicates whether the Pokémon is Legendary or not")
+                            )
                         )
                 ),
                 tabItem(tabName = "kNN",
@@ -193,20 +211,20 @@ shinyUI(
                         ),
                         box(
                             title = "Box Plot",
-                            solidHeader = TRUE, width = 6,
+                            solidHeader = TRUE, width = 9,
                             collapsible = TRUE, status = "info",
                             plotlyOutput("boxPlot")
                         ),
                         box(
                             title = "Save Plot",
-                            solidHeader = TRUE, width = 6,
+                            solidHeader = TRUE, width = 3,
                             collapsible = TRUE, status = "warning",
                             selectizeInput( "savePlot", 
                                             "Choose Plot to Save",
                                             choices = c("Correlation Plot",
                                                         "Histogram",
                                                         "Box Plot"),
-                                            selected = "Histogram"),
+                                            selected = "Correlation Plot"),
                             downloadButton("downloadPlot", "Save Plot")
                         )
                     )
@@ -218,12 +236,17 @@ shinyUI(
                     h3("The goal of this App is to walkthrough data science with R."),
                     h2("How the App works?"),
                     h3("The app has different tabs which walks through different methods used."),
-                    h4("Tab Data Exploration : In this tab you'll see basic summary of how the dataset looks like. You can do a statistical summary, get 5 point summary plot graphs, check for correlation if any etc."),
+                    tags$b(h4("Data Exploration :")),
+                    h4("In this tab you will see basic summary of how the dataset looks like. You can do a statistical summary, get 5 point summary plot graphs, check for correlation if any etc."),
                     br(),
-                    h4("Tab Unsupervised Learning: In this we try to find any relationship in the data. Here the goal is not make predictions but finding trends/correlation. In this we'll examine PCA technique."),
+                    h4("Unsupervised Learning:"),
+                    h4("In this we try to find any relationship in the data. Here the goal is not make predictions but finding trends/correlation. In this we'll examine PCA technique."),
                     br(),
-                    h4("Tab Supervised Learning:"),
-                    h4(" We'll build models and make predictions here! We'll be comparing RMSE and R-Squared to choose model."),
+                    h4("Supervised Learning:"),
+                    h4(" We'll build models and make predictions here! Our goal is to predict total strength of a pokemon based on different predictors. We'll be comparing RMSE and R-Squared to choose model."),
+                    br(),
+                    h4("Data"),
+                    h4("Displays pokemon dataset"),
                     br(),
                     withMathJax(
                     helpText('RMSE is calculated as $$\\left(\\sqrt{\\frac{1}{n}\\sum_1^n x^2}\\right)$$')),

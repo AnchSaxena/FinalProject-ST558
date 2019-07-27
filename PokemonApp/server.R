@@ -137,7 +137,7 @@ shinyServer(function(input, output, session) {
         #BiPlot
         output$biPlot <- renderPlot({
             if(input$var1 == input$var2){
-                return(null())
+                print("X & Y variables should be different")
             }
             biplot(pca, choices = c(as.numeric(input$var1),
                                     as.numeric(input$var2)), cex = 0.8,
@@ -177,10 +177,13 @@ shinyServer(function(input, output, session) {
     
     #Box Plot
     output$boxPlot <- renderPlotly({
-        ggplot(pokemonData, aes(Generation, color = Legendary)) + 
-            geom_bar()+
-            labs(title = "Stacked Bar Chart", x = "generation", 
-                 y = "count of generation") 
+        pokemonData %>%
+            gather(key, value, HitPoints:Speed) %>%
+            ggplot(aes(x=key, y=value, fill = key)) +
+            geom_boxplot() +
+            theme(legend.position = 'none') +
+            labs(y='Stats', x='Category', title = 'Boxplot Distribution of Overall Pokemon Stats') +
+            theme(plot.title = element_text(hjust = 0.5))
     })
     
     #Download data to csv
@@ -189,10 +192,10 @@ shinyServer(function(input, output, session) {
         content = function(file){
             png(file)
             if(input$savePlot == "Histogram"){
-                qplot(pokemonData$Total,geom="histogram", 
+                print(qplot(pokemonData$Total,geom="histogram", 
                       binwidth = 2, xlab = "Total", ylab = "Frequency",
                       fill=I("blue"), 
-                      col=I("red"))
+                      col=I("red")))
             }
             else if(input$savePlot == "Correlation Plot"){
                 df <- getData()
@@ -201,10 +204,13 @@ shinyServer(function(input, output, session) {
                 corrplot(Correlation,type="lower")
             }
             else{
-                ggplot(pokemonData, aes(Generation, color = Legendary)) + 
-                    geom_bar()+
-                    labs(title = "Stacked Bar Chart", x = "generation", 
-                         y = "count of generation")
+                print(ggplot(data = pokemon, aes(x = Generation, y = Total, fill = as.factor(Generation))) +
+                          geom_boxplot() +
+                          xlab(label = "Pokemon Generation") +
+                          ylab(label = "Total Score of Pokemon") +
+                          ggtitle(label = "Pokemon Score by Generation facet by Lengendry flag") +
+                          theme(plot.title = element_text(hjust = 0.5)) +
+                          theme(legend.position="none"))
             }
             dev.off()}
     )
