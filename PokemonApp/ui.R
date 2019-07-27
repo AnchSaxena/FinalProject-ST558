@@ -45,7 +45,8 @@ shinyUI(
                             br(),
                             div(style = 'overflow-x: scroll', 
                                 dataTableOutput("table1")),
-                            a(href="www.kaggle.com", target="_blank")
+                            br(),
+                            a("Data Source" ,href="https://www.kaggle.com/alopez247/pokemon", target="_blank")
                         )
                 ),
                 tabItem(tabName = "kNN",
@@ -227,7 +228,19 @@ shinyUI(
                     withMathJax(
                     helpText('RMSE is calculated as $$\\left(\\sqrt{\\frac{1}{n}\\sum_1^n x^2}\\right)$$')),
                     h3("References: "),
-                    a(href='https://rstudio-pubs-static.s3.amazonaws.com/356603_d15935202c01480d8530f9149144a6a4.html', 
+                    a("Ref1",href='https://rstudio-pubs-static.s3.amazonaws.com/356603_d15935202c01480d8530f9149144a6a4.html', 
+                      target="_blank"),
+                    br(),
+                    a("Ref2",href='http://www.rpubs.com/dannyhuang/pokemon_go_ML', 
+                      target="_blank"),
+                    br(),
+                    a("Ref3",href='https://www.kaggle.com/shwetp/pokemon-visualizations-unsupervised-learning', 
+                      target="_blank"),
+                    br(),
+                    a("Ref4",href='https://www.kaggle.com/devisangeetha/analysis-on-pokemon-data', 
+                      target="_blank"),
+                    br(),
+                    a("Ref5",href='https://amysfernweh.wordpress.com/2017/08/13/random-forest-with-pokemon-dataset-with-correlation-plot-with-r/', 
                       target="_blank")
                 )
             )

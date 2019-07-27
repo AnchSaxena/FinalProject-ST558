@@ -17,7 +17,7 @@ library(caret)
 library(plotly)
 
 #read data/clean it
-pokemonData <- read.csv("C:\\Users\\dbhat\\Desktop\\ST558\\FinalProject-ST558\\Pokemon.csv")
+pokemonData <- read.csv("../Pokemon.csv")
 
 features <- colnames(pokemonData)
 
@@ -34,7 +34,7 @@ pokemonDataTest <- pokemonData[test, ]
 shinyServer(function(input, output, session) {
     #Reading in file
     getData <- reactive({
-        read.csv("C:\\Users\\dbhat\\Desktop\\ST558\\FinalProject-ST558\\Pokemon.csv")
+        read.csv("../Pokemon.csv")
     })
     
     #######################################################################
