@@ -17,7 +17,7 @@ library(caret)
 library(plotly)
 
 #read data/clean it
-pokemonData <- read.csv("./Pokemon.csv")
+pokemonData <- read.csv("../Pokemon.csv")
 
 features <- colnames(pokemonData)
 
@@ -34,7 +34,7 @@ pokemonDataTest <- pokemonData[test, ]
 shinyServer(function(input, output, session) {
     #Reading in file
     getData <- reactive({
-        read.csv("./Pokemon.csv")
+        read.csv("../Pokemon.csv")
     })
     
     #######################################################################
@@ -204,13 +204,13 @@ shinyServer(function(input, output, session) {
                 corrplot(Correlation,type="lower")
             }
             else{
-                print(ggplot(data = pokemon, aes(x = Generation, y = Total, fill = as.factor(Generation))) +
+                print(pokemonData %>%
+                          gather(key, value, HitPoints:Speed) %>%
+                          ggplot(aes(x=key, y=value, fill = key)) +
                           geom_boxplot() +
-                          xlab(label = "Pokemon Generation") +
-                          ylab(label = "Total Score of Pokemon") +
-                          ggtitle(label = "Pokemon Score by Generation facet by Lengendry flag") +
-                          theme(plot.title = element_text(hjust = 0.5)) +
-                          theme(legend.position="none"))
+                          theme(legend.position = 'none') +
+                          labs(y='Stats', x='Category', title = 'Boxplot Distribution of Overall Pokemon Stats') +
+                          theme(plot.title = element_text(hjust = 0.5)))
             }
             dev.off()}
     )
