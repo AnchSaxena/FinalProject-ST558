@@ -76,7 +76,7 @@ shinyServer(function(input, output, session) {
         #Update Model
         output$kNNModel <- renderUI({
             text <- (paste("Model Selected : Total ~ ",paste(input$checkGroup,collapse="+")))
-            h5(text)
+            h3(text)
         })
 
     })
@@ -108,7 +108,7 @@ shinyServer(function(input, output, session) {
         #Update Model
         output$modelSelected <- renderUI({
             text <- (paste("Model Selected : Total ~ ",paste(input$rfcheckGroup,collapse="+")))
-            h5(text)
+            h3(text)
         })
 
     })
