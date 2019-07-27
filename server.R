@@ -17,7 +17,7 @@ library(caret)
 library(plotly)
 
 #read data/clean it
-pokemonData <- read.csv("./Pokemon.csv")
+pokemonData <- read.csv("../Pokemon.csv")
 
 features <- colnames(pokemonData)
 
@@ -34,14 +34,14 @@ pokemonDataTest <- pokemonData[test, ]
 shinyServer(function(input, output, session) {
     #Reading in file
     getData <- reactive({
-        read.csv("./Pokemon.csv")
+        read.csv("../Pokemon.csv")
     })
     
     #######################################################################
     # #Data Tab
     #######################################################################
     output$table1 <- renderDataTable({
-         datatable(getData()[,2:13])
+        datatable(getData()[,2:13])
     })
     #Download data to csv
     output$downloadData <- downloadHandler(
@@ -63,22 +63,22 @@ shinyServer(function(input, output, session) {
                         tuneGrid = expand.grid(k = input$k))
         #Predict
         knnPredict <- predict(knnFit,newdata = pokemonDataTest)
-
+        
         #Print RMSE of predicted Model
         output$value <- renderPrint({
             r <- RMSE(knnPredict, pokemonDataTest$Total)
             paste("RMSE of predicted model is", r)
-            })
+        })
         # Print training model Summary
         output$knnSumm <- renderPrint({
             knnFit
-            })
+        })
         #Update Model
         output$kNNModel <- renderUI({
             text <- (paste("Model Selected : Total ~ ",paste(input$checkGroup,collapse="+")))
             h4(text)
         })
-
+        
     })
     
     #######################################################################
@@ -89,12 +89,12 @@ shinyServer(function(input, output, session) {
         ctrl <- trainControl(method = "repeatedcv", number = 10,
                              repeats = 3)
         rfFit <- train(as.formula(paste("Total ~ ",paste(input$rfcheckGroup,collapse="+"))), data = pokemonDataTrain,
-                        method = "rf", trControl = ctrl,
-                        preProcess = c("center","scale")
-                        )
+                       method = "rf", trControl = ctrl,
+                       preProcess = c("center","scale")
+        )
         #Predict
         rfPredict <- predict(rfFit,newdata = pokemonDataTest)
-
+        
         #Print RMSE of predicted Model
         output$rfvalue <- renderPrint({
             r2 <- summary(rfPredict)
@@ -110,7 +110,20 @@ shinyServer(function(input, output, session) {
             text <- (paste("Model Selected : Total ~ ",paste(input$rfcheckGroup,collapse="+")))
             h4(text)
         })
-
+        #User Model
+        rf <- randomForest(Total~HitPoints+Attack+Defense+Speed,
+                           data = pokemonData)
+        rfUSerPred <- predict(rf,newdata = data.frame(HitPoints = input$hp,
+                                             Attack = input$at,
+                                             Defense = input$de,
+                                             Speed = input$speed))
+        #USer Result
+        output$pred <- renderPrint({
+            userRFRMSE <- RMSE(rfUSerPred,pokemonData$Total)
+            print(c(paste("RF model prediction for Total is", rfUSerPred),
+            paste("RSME of RF Model is", userRFRMSE)))
+        })
+        
     })
     
     #######################################################################
@@ -119,31 +132,31 @@ shinyServer(function(input, output, session) {
     observe({
         dataPCA <- pokemonData %>% select(5:11)
         pca<-prcomp(dataPCA, center=TRUE, scale=TRUE)
-
+        
         #Store PCs into dataframe
         PC <- as.data.frame(pca$rotation)
         output$PCTable <- renderDataTable({
             datatable(round(PC,3))
         })
-
+        
         # Variability of each principal component: pr.var
         pr.var <- pca$sdev^2
         # Variance explained by each principal component: pve
         pve <- pr.var / sum(pr.var)
-
+        
         #ScreePlot
         output$screePlot <- renderPlot({
             # Plot variance explained for each principal component
             screeplot(pca, type = "lines")
         })
-
+        
         output$cummVarPlot <- renderPlot({
             #Plot cumulative proportion of variance explained
             plot(cumsum(pve), xlab = "Principal Component",
                  ylab = "Cumulative Proportion of Variance Explained",
                  ylim = c(0, 1), type = "b")
         })
-
+        
         #BiPlot
         output$biPlot <- renderPlot({
             if(input$var1 == input$var2){
@@ -153,12 +166,12 @@ shinyServer(function(input, output, session) {
                                     as.numeric(input$var2)), cex = 0.8,
                    xlim = c(-0.08, 0.1), ylim = c(-0.07, 0.1))
         })
-
+        
         #Print PCA Summary
         output$pcSumm <- renderPrint({
             summary(pca)
         })
-
+        
     })
     #######################################################################
     #Data exploration
@@ -181,8 +194,8 @@ shinyServer(function(input, output, session) {
     #Histogram
     output$hist <- renderPlotly({
         qplot(pokemonData$Total,geom="histogram", 
-          binwidth = 2, xlab = "Total", fill=I("blue"), 
-          col=I("red"))
+              binwidth = 2, xlab = "Total", fill=I("blue"), 
+              col=I("red"))
     })
     
     #Box Plot
@@ -203,9 +216,9 @@ shinyServer(function(input, output, session) {
             png(file)
             if(input$savePlot == "Histogram"){
                 print(qplot(pokemonData$Total,geom="histogram", 
-                      binwidth = 2, xlab = "Total", ylab = "Frequency",
-                      fill=I("blue"), 
-                      col=I("red")))
+                            binwidth = 2, xlab = "Total", ylab = "Frequency",
+                            fill=I("blue"), 
+                            col=I("red")))
             }
             else if(input$savePlot == "Correlation Plot"){
                 df <- getData()
@@ -224,5 +237,5 @@ shinyServer(function(input, output, session) {
             }
             dev.off()}
     )
-
+    
 })
