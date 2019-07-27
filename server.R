@@ -73,6 +73,11 @@ shinyServer(function(input, output, session) {
         output$knnSumm <- renderPrint({
             knnFit
             })
+        #Update Model
+        output$kNNModel <- renderUI({
+            text <- (paste("Model Selected : Total ~ ",paste(input$checkGroup,collapse="+")))
+            h3(text)
+        })
 
     })
     
@@ -99,6 +104,11 @@ shinyServer(function(input, output, session) {
         # Print training model Summary
         output$rfSumm <- renderPrint({
             rfFit
+        })
+        #Update Model
+        output$modelSelected <- renderUI({
+            text <- (paste("Model Selected : Total ~ ",paste(input$rfcheckGroup,collapse="+")))
+            h3(text)
         })
 
     })
