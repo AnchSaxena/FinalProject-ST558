@@ -85,7 +85,9 @@ shinyUI(
                                                "Type2","Legendary",
                                                "Generation"),
                                     inline = F,
-                                     selected = "Attack")
+                                     selected = "Attack"),
+                                    uiOutput("kNNModel")
+                                   
                                 ),
                                 box(
                                     title = "Model Summary",
@@ -117,7 +119,8 @@ shinyUI(
                                                "Type2","Legendary",
                                                "Generation"),
                                    inline = F,
-                                   selected = "Attack")
+                                   selected = "Attack"),
+                                    uiOutput("modelSelected")
                                 ),
                                 box(
                                     title = "Training Model Summary",
@@ -162,7 +165,11 @@ shinyUI(
                                            selected = 1),
                             selectizeInput('var2', 'Select PC on y-axis',
                                           choices = c(1,2,3,4,5,6,7),
-                                          selected = 2)
+                                          selected = 2),
+                            conditionalPanel(
+                                condition = "input.var1==input.var2",
+                                h4("X and Y PCs should be different!")
+                            )
                         ),
                         box(
                             title = "Bi Plot", width = 8,
