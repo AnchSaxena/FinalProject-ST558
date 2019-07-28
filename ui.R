@@ -80,7 +80,7 @@ shinyUI(
                                 p(h4(strong("SpecialDefense:")," The base damage resistance against special attacks")),
                                 p(h4(strong("Speed:")," Determines which pokemon attacks first each round")),
                                 p(h4(strong("Generation:")," Number of the generation when the Pokémon was introduced")),
-                                p(h4(strong("Legendary:")," Boolean that indicates whether the Pokémon is Legendary or not"))
+                                p(h4(strong("Legendary:")," Indicates whether the Pokémon is Legendary or not"))
                             )
                         )
                 ),
