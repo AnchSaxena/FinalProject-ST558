@@ -42,30 +42,45 @@ shinyUI(
             tabItems(
                 tabItem(tabName = "dataSet",
                         fluidRow(
-                            downloadButton("downloadData","Download Data"),
-                            br(),
-                            br(),
-                            div(style = 'overflow-x: scroll', 
-                                dataTableOutput("table1")),
-                            br(),
+                            box(
+                                title = "Data Subsetting",
+                                solidHeader = TRUE, width = 3,
+                                collapsible = TRUE, status = "warning",
+                                radioButtons("button","Choose data set",
+                                             choices = c("Complete",
+                                                         "Subset")),
+                            conditionalPanel(condition = "input.button == 'Subset'",
+                                        selectizeInput('gen', 
+                                                'Select Generation',
+                                                choices = c(1,2,3,4,5,6),
+                                                            selected = 1)),
+                            downloadButton("downloadData","Download Data")
+                            ),
+                            box(
+                                title = "Data",
+                                solidHeader = TRUE, width = 9,
+                                collapsible = TRUE, status = "success",
+                            div(style = 'overflow-x: scroll',
+                                dataTableOutput("table1"))
+                            ),
                             box(
                                 title = "Description of DataSet",
                                 solidHeader = TRUE, width = 12,
                                 collapsible = TRUE, status = "danger",
-                                a("Data Source" ,href="https://www.kaggle.com/alopez247/pokemon", target="_blank"),
+                                a(h4("Link to Data Source") ,href="https://www.kaggle.com/alopez247/pokemon", target="_blank"),
                                 br(),
-                                h4("Name: Name of each pokemon"),
-                                h4("Type1: Each pokemon has a type, this determines weakness/resistance to attacks"),
-                                h4("Type2: Some pokemon are dual type and have 2"),
-                                h4("Total: Sum of all stats that come after this, a general guide to how strong a pokemon is"),
-                                h4("HitPoints: This defines how much damage a pokemon can withstand before fainting"),
-                                h4("Attack: The base modifier for normal attacks (eg. Scratch, Punch)"),
-                                h4("Defense: The base damage resistance against normal attacks"),
-                                h4("SpecialAttack: The base modifier for special attacks (e.g. fire blast, bubble beam)"),
-                                h4("SpecialDefense: The base damage resistance against special attacks"),
-                                h4("Speed: Determines which pokemon attacks first each round"),
-                                h4("Generation: Number of the generation when the Pokémon was introduced"),
-                                h4("Legendary: Boolean that indicates whether the Pokémon is Legendary or not")
+                                p(h4(strong("Name:")," Name of each pokemon")),
+                                p(h4(strong("Type1:")," Each pokemon has a type, this determines weakness/resistance to attacks")),
+                                p(h4(strong("Type2:")," Some pokemon are dual type and have 2")),
+                                p(h4(strong("Total:")," Sum of all stats that come after this, a general guide to how strong a pokemon is")),
+                                p(h4(strong("HitPoints:")," This defines how much damage a pokemon can withstand before fainting")),
+                                p(h4(strong("Attack:")," The base modifier for normal attacks (eg. Scratch, Punch)")),
+                                p(h4(strong("Defense:")," The base damage resistance against normal attacks")),
+                                p(h4(strong("SpecialAttack:")," The base modifier for special attacks (e.g. fire blast, bubble beam)")),
+                                p(h4(strong("SpecialDefense:")," The base damage resistance against special attacks")),
+                                p(h4(strong("Speed:")," Determines which pokemon attacks first each round")),
+                                p(h4(strong("Generation:")," Number of the generation when the Pokémon was introduced")),
+                                p(h4(strong("Legendary:")," Boolean that indicates whether the Pokémon is Legendary or not"))
                             )
                         )
                 ),
@@ -161,7 +176,7 @@ shinyUI(
                             box(
                                 title = "Select PCs to be plotted",
                                 solidHeader = TRUE,  width = 4,
-                                collapsible = TRUE, status = "primary",
+                                collapsible = TRUE, status = "warning",
                                 selectizeInput('var1', 'Select PC on x-axis',
                                                choices = c(1,2,3,4,5,6,7),
                                                selected = 1),
@@ -170,25 +185,25 @@ shinyUI(
                                                selected = 2),
                                 conditionalPanel(
                                     condition = "input.var1==input.var2",
-                                    h4("X and Y PCs should be different!")
+                                    h4("Error : X and Y PCs should be different!", style = "color:red;")
                                 )
                             ),
                             box(
                                 title = "Bi Plot", width = 8,
                                 solidHeader = TRUE,
-                                collapsible = TRUE, status = "primary",
+                                collapsible = TRUE, status = "success",
                                 plotOutput("biPlot", height = 500, width = 500)
                             ),
                             box(
                                 title = "Scree Plot", width = 6,
                                 solidHeader = TRUE,
-                                collapsible = TRUE, status = "primary",
+                                collapsible = TRUE, status = "info",
                                 plotOutput("screePlot")
                             ),
                             box(
                                 title = "Cummulative Variance Plot", width = 6,
                                 solidHeader = TRUE,
-                                collapsible = TRUE, status = "primary",
+                                collapsible = TRUE, status = "danger",
                                 plotOutput("cummVarPlot")
                             )
                         )
@@ -198,7 +213,7 @@ shinyUI(
                             box(
                                 title = "Basic Summary of Data Set",
                                 solidHeader = TRUE,  width = 12,
-                                collapsible = TRUE, status = "primary",
+                                collapsible = TRUE, status = "info",
                                 verbatimTextOutput("basicStat")
                                 
                             )
@@ -209,7 +224,7 @@ shinyUI(
                             box(
                                 title = "Correlation Plot",
                                 solidHeader = TRUE, width = 6,
-                                collapsible = TRUE, status = "primary",
+                                collapsible = TRUE, status = "info",
                                 plotOutput("corPlot1")
                             ),
                             box(
@@ -221,7 +236,7 @@ shinyUI(
                             box(
                                 title = "Box Plot",
                                 solidHeader = TRUE, width = 9,
-                                collapsible = TRUE, status = "info",
+                                collapsible = TRUE, status = "success",
                                 plotlyOutput("boxPlot")
                             ),
                             box(
@@ -241,27 +256,27 @@ shinyUI(
                         )
                 ),
                 tabItem(tabName = "intro",
-                        h1("Learning Datascience with Pokemon"),
+                        h1(strong("Learning Datascience with Pokemon")),
                         br(),
-                        h2("Goal"),
-                        h3("The goal of this App is to walkthrough data science with R."),
-                        h2("How the App works?"),
-                        h3("The app has different tabs which walks through different methods used."),
-                        tags$b(h4("Data Exploration :")),
+                        h3(strong("Goal")),
+                        h4("The goal of this App is to walkthrough data science with R."),
+                        h3(strong("How the App works?")),
+                        h4("The app has different tabs which walks through different methods used."),
+                        h4(strong("Data Exploration :")),
                         h4("In this tab you will see basic summary of how the dataset looks like. You can do a statistical summary, get 5 point summary plot graphs, check for correlation, if any, etc."),
                         br(),
-                        h4("Unsupervised Learning:"),
+                        h4(strong("Unsupervised Learning:")),
                         h4("In this we'll try to find any relationship in the data. Here the goal is not make predictions but finding trends/correlation. We'll examine PCA technique for unsupervised learning."),
                         br(),
-                        h4("Supervised Learning:"),
+                        h4(strong("Supervised Learning:")),
                         h4(" We'll build models and make predictions here! Our goal is to predict total strength of a pokemon based on different predictors. We'll be comparing RMSE and R-Squared to choose model."),
                         withMathJax(
-                            helpText('RMSE is calculated as $$\\left(\\sqrt{\\frac{1}{n}\\sum_1^n x^2}\\right)$$')),
-                        br(),
-                        h4("Data"),
+                            helpText(h4('RMSE is calculated as $$\\left(\\sqrt{\\frac{1}{n}\\sum_1^n x^2}\\right)$$'))),
+                        #br(),
+                        h4(strong("Data Tab: ")),
                         h4("Displays pokemon dataset"),
                         br(),
-                        h3("References: "),
+                        h3(strong("References: ")),
                         a("Ref1",href='https://rstudio-pubs-static.s3.amazonaws.com/356603_d15935202c01480d8530f9149144a6a4.html', 
                           target="_blank"),
                         br(),

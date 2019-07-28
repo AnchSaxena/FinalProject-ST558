@@ -17,7 +17,7 @@ library(caret)
 library(plotly)
 
 #read data/clean it
-pokemonData <- read.csv("./Pokemon.csv")
+pokemonData <- read.csv("../Pokemon.csv")
 
 features <- colnames(pokemonData)
 
@@ -34,20 +34,32 @@ pokemonDataTest <- pokemonData[test, ]
 shinyServer(function(input, output, session) {
     #Reading in file
     getData <- reactive({
-        read.csv("./Pokemon.csv")
+        read.csv("../Pokemon.csv")
     })
     
     #######################################################################
     # #Data Tab
     #######################################################################
     output$table1 <- renderDataTable({
+        if(input$button =="Complete"){
         datatable(getData()[,2:13])
+        }
+        else{
+            datatable(subset(pokemonData, Generation == input$gen))
+        }
     })
     #Download data to csv
     output$downloadData <- downloadHandler(
         filename = function(){paste("pokemonData", "csv", sep = ".")}, 
         content = function(file){
-            write.csv(pokemonData, file)}
+            if(input$button == "Complete"){
+            write.csv(pokemonData, file)
+            }
+            else{
+                dt <- subset(pokemonData, Generation == input$gen)
+                write.csv(dt, file)
+            }
+        }
     )
     
     #######################################################################
@@ -121,8 +133,8 @@ shinyServer(function(input, output, session) {
         #USer Result
         output$pred <- renderPrint({
             userRFRMSE <- RMSE(rfUSerPred,pokemonData$Total)
-            print(c(paste("RF model prediction for Total(Strength) of Pokemon is", rfUSerPred),
-            paste("RMSE of RF Model is", userRFRMSE)))
+            print(c(paste("RF model prediction for Total(Strength) of Pokemon is",round(rfUSerPred,3)),
+            paste("RMSE of RF Model is", round(userRFRMSE,3))))
         })
         
     })
