@@ -258,7 +258,7 @@ shinyUI(
                 tabItem(tabName = "intro",
                         h1(strong("Learning Data Science with Pokemon")),
                         br(),
-                        img("./image.jpg", width=200),
+                        img(src="./image.jpg", width=200),
                         h3(strong("Goal")),
                         h4("The goal of this App is to walkthrough data science with R."),
                         h3(strong("How the App works?")),
