@@ -79,7 +79,7 @@ shinyServer(function(input, output, session) {
         #Print RMSE of predicted Model
         output$value <- renderPrint({
             r <- RMSE(knnPredict, pokemonDataTest$Total)
-            paste("RMSE of predicted model is", r)
+            paste("RMSE of model is", r)
         })
         # Print training model Summary
         output$knnSumm <- renderPrint({
@@ -112,7 +112,7 @@ shinyServer(function(input, output, session) {
         output$rfvalue <- renderPrint({
             r2 <- summary(rfPredict)
             rfR <- RMSE(rfPredict, pokemonDataTest$Total)
-            paste("RMSE of predicted model is", rfR)
+            paste("RMSE of model is", rfR)
         })
         # Print training model Summary
         output$rfSumm <- renderPrint({
