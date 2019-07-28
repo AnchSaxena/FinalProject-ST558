@@ -225,7 +225,7 @@ shinyUI(
                                 plotlyOutput("boxPlot")
                             ),
                             box(
-                                title = "Save Plot",
+                                title = "Save Plot & Data",
                                 solidHeader = TRUE, width = 3,
                                 collapsible = TRUE, status = "warning",
                                 selectizeInput( "savePlot", 
@@ -234,7 +234,9 @@ shinyUI(
                                                             "Histogram",
                                                             "Box Plot"),
                                                 selected = "Correlation Plot"),
-                                downloadButton("downloadPlot", "Save Plot")
+                                downloadButton("downloadPlot", "Save Plot"),
+                                br(),
+                                downloadButton("downloadPlotData", "Save Plot Data")
                             )
                         )
                 ),

@@ -17,7 +17,7 @@ library(caret)
 library(plotly)
 
 #read data/clean it
-pokemonData <- read.csv("./Pokemon.csv")
+pokemonData <- read.csv("../Pokemon.csv")
 
 features <- colnames(pokemonData)
 
@@ -34,7 +34,7 @@ pokemonDataTest <- pokemonData[test, ]
 shinyServer(function(input, output, session) {
     #Reading in file
     getData <- reactive({
-        read.csv("./Pokemon.csv")
+        read.csv("../Pokemon.csv")
     })
     
     #######################################################################
@@ -79,6 +79,7 @@ shinyServer(function(input, output, session) {
             h4(text)
         })
         
+        
     })
     
     #######################################################################
@@ -120,8 +121,8 @@ shinyServer(function(input, output, session) {
         #USer Result
         output$pred <- renderPrint({
             userRFRMSE <- RMSE(rfUSerPred,pokemonData$Total)
-            print(c(paste("RF model prediction for Total is", rfUSerPred),
-            paste("RSME of RF Model is", userRFRMSE)))
+            print(c(paste("RF model prediction for Total(Strength) of Pokemon is", rfUSerPred),
+            paste("RMSE of RF Model is", userRFRMSE)))
         })
         
     })
@@ -209,7 +210,7 @@ shinyServer(function(input, output, session) {
             theme(plot.title = element_text(hjust = 0.5))
     })
     
-    #Download data to csv
+    #Download Plots
     output$downloadPlot <- downloadHandler(
         filename = function(){paste(input$savePlot, "png", sep = ".")}, 
         content = function(file){
@@ -236,6 +237,26 @@ shinyServer(function(input, output, session) {
                           theme(plot.title = element_text(hjust = 0.5)))
             }
             dev.off()}
+    )
+    
+    #Download Plot Data
+    output$downloadPlotData <- downloadHandler(
+        filename = function(){paste(input$savePlot, "csv", sep = ".")}, 
+        content = function(file){
+            if(input$savePlot == "Histogram"){
+                histData <- as.data.frame(pokemonData$Total)
+                write.csv(histData, file)
+            }
+            else if(input$savePlot == "Correlation Plot"){
+                corData <- getData()
+                write.csv(corData, file)
+            }
+            else{
+                boxData <- pokemonData %>%
+                    gather(key, value, HitPoints:Speed)
+                write.csv(boxData, file)
+            }
+        }
     )
     
 })
