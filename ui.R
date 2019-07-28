@@ -147,7 +147,7 @@ shinyUI(
                                     verbatimTextOutput("rfSumm"))
                             ),
                             box(
-                                title = "RMSE for Predicted Model",
+                                title = "RMSE for Model",
                                 solidHeader = TRUE,  width = 8,
                                 collapsible = TRUE, status = "primary",
                                 verbatimTextOutput("rfvalue")
@@ -277,19 +277,19 @@ shinyUI(
                         h4("Displays pokemon dataset"),
                         br(),
                         h3(strong("References: ")),
-                        a("Ref1",href='https://rstudio-pubs-static.s3.amazonaws.com/356603_d15935202c01480d8530f9149144a6a4.html', 
+                        a("PCA for Pokemon",href='https://rstudio-pubs-static.s3.amazonaws.com/356603_d15935202c01480d8530f9149144a6a4.html', 
                           target="_blank"),
                         br(),
-                        a("Ref2",href='http://www.rpubs.com/dannyhuang/pokemon_go_ML', 
+                        a("Machine Learning With Pokemon",href='http://www.rpubs.com/dannyhuang/pokemon_go_ML', 
                           target="_blank"),
                         br(),
-                        a("Ref3",href='https://www.kaggle.com/shwetp/pokemon-visualizations-unsupervised-learning', 
+                        a("Visualizations",href='https://www.kaggle.com/shwetp/pokemon-visualizations-unsupervised-learning', 
                           target="_blank"),
                         br(),
-                        a("Ref4",href='https://www.kaggle.com/devisangeetha/analysis-on-pokemon-data', 
+                        a("Pokemon Analysis",href='https://www.kaggle.com/devisangeetha/analysis-on-pokemon-data', 
                           target="_blank"),
                         br(),
-                        a("Ref5",href='https://amysfernweh.wordpress.com/2017/08/13/random-forest-with-pokemon-dataset-with-correlation-plot-with-r/', 
+                        a("Random Forest",href='https://amysfernweh.wordpress.com/2017/08/13/random-forest-with-pokemon-dataset-with-correlation-plot-with-r/', 
                           target="_blank"),
                         br(),
                         h3("Author : Anchal Saxena")
